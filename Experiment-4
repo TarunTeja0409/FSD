@@ -1,0 +1,155 @@
+Experiment-4:
+-------------
+create a food delivery website where user can order food from as particular restaurant listed in the website for handling http requests and responses using nodejs
+
+Aim: The aim of this experiment is to understand how to handle user HTTP Get requests on the  food deliver app to display the list of restaurants & its menu & then how to handle POST HTTP requests to place the orders on the menu of restaurants using NodeJs & ExpressJs
+
+Recommended Hardware/Software Requirements:
+-------------------------------------------
+->Intel Based Desktop PC with minimum of 166 MHZ or faster processor with at least 64 MB RAM and 100 MB free disk space
+->Nodejs, Visual Studio Code
+
+Application setup:
+------------------
+It is a simple food delivery website backend using Node.js + Express that handles HTTP requests and responses.
+
+Users can:
+
+=>View restaurants
+
+=>View food items from a particular restaurant
+
+=>Place an order
+
+Project Setup:
+--------------
+mkdir food-delivery
+cd food-delivery
+npm init -y
+npm install express body-parser
+
+Folder Structure:
+-----------------
+food-delivery/
+â”‚
+â”œâ”€â”€ server.js
+â””â”€â”€ package.json
+
+server.js (Node.js HTTP handling):
+----------------------------------
+const express = require("express");
+const bodyParser = require("body-parser");
+
+const app = express();
+const PORT = 3000;
+
+// Middleware
+app.use(bodyParser.json());
+
+// Sample data (mock database)
+const restaurants = [
+  {
+    id: 1,
+    name: "Pizza Palace",
+    menu: [
+      { id: 101, name: "Margherita Pizza", price: 10 },
+      { id: 102, name: "Pepperoni Pizza", price: 12 }
+    ]
+  },
+  {
+    id: 2,
+    name: "Burger Hub",
+    menu: [
+      { id: 201, name: "Cheese Burger", price: 8 },
+      { id: 202, name: "Veg Burger", price: 7 }
+    ]
+  }
+];
+
+// Home Route
+app.get("/", (req, res) => {
+  res.send("Welcome to Food Delivery API");
+});
+
+// Get all restaurants
+app.get("/restaurants", (req, res) => {
+  res.status(200).json(restaurants);
+});
+
+//  Get menu of a particular restaurant
+app.get("/restaurants/:id/menu", (req, res) => {
+  const restaurantId = parseInt(req.params.id);
+  const restaurant = restaurants.find(r => r.id === restaurantId);
+
+  if (!restaurant) {
+    return res.status(404).json({ message: "Restaurant not found" });
+  }
+
+  res.status(200).json(restaurant.menu);
+});
+
+//  Place an order
+app.post("/order", (req, res) => {
+  const { restaurantId, items } = req.body;
+
+  const restaurant = restaurants.find(r => r.id === restaurantId);
+
+  if (!restaurant) {
+    return res.status(404).json({ message: "Restaurant not found" });
+  }
+
+  let totalPrice = 0;
+
+  items.forEach(itemId => {
+    const menuItem = restaurant.menu.find(m => m.id === itemId);
+    if (menuItem) {
+      totalPrice += menuItem.price;
+    }
+  });
+
+  res.status(201).json({
+    message: "Order placed successfully ",
+    restaurant: restaurant.name,
+    totalAmount: totalPrice
+  });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(` Server running on http://localhost:${PORT}`);
+});
+----------------------------------------------------------
+-------------------------------------
+How HTTP Requests & Responses Work Here
+---------------------------------------
+GET	/restaurants	        Get all restaurants
+GET	/restaurants/:id/menu	Get food from a specific 
+                                restaurant    
+POST	/order	Place an order
+----------------------------------------------------------
+Run the Project:
+-----------------
+node server.js
+
+Open in browser:
+----------------
+http://localhost:3000
+
+Get all restaurants:
+---------------------
+http://localhost:3000/restaurants
+
+Get menu of restaurant:
+-------------------------
+GET http://localhost:3000/restaurants/1
+
+Place an order:
+---------------
+POST http://localhost:3000/order
+
+=================================================================
+
+
+
+
+
